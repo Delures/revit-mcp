@@ -1,0 +1,55 @@
+name: Bug report
+description: The server does not work, a tool returns an error, Revit crashes
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check that the problem reproduces on the latest release and that
+        every step in the README "Installation" section has been completed.
+  - type: input
+    id: version
+    attributes:
+      label: Server version
+      description: Output of `RevitMCP.Cli.exe --version`
+      placeholder: Revit MCP Server v1.0.0
+    validations:
+      required: true
+  - type: input
+    id: revit
+    attributes:
+      label: Revit version
+      placeholder: Revit 2024.3
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      description: Claude Desktop, Cursor, VS Code, Antigravity, etc. with its version
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a model ...
+        2. Ask the agent to ...
+        3. Observe the error ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Excerpt from `%LocalAppData%\RevitMCP\logs\` and the Agent Activity pane output
+      render: text
+    validations:
+      required: false

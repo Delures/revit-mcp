@@ -1,0 +1,213 @@
+<UserControl x:Class="RevitMCP.Plugin.UI.AgentActivityDockablePane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="360"
+             Background="#1E1E1E" Foreground="#CCCCCC"
+             FontFamily="Segoe UI" FontSize="12">
+
+    <UserControl.Resources>
+        <!-- Modern flat button style -->
+        <Style x:Key="FlatButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="3" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#3E3E42"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#007ACC"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Interactive Select Elements Button -->
+        <Style x:Key="SelectElementsButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1B3347"/>
+            <Setter Property="Foreground" Value="#75BEFF"/>
+            <Setter Property="BorderBrush" Value="#29557C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#244E72"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#3877A8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#0E639C"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#252526" BorderBrush="#3F3F46" BorderThickness="0,0,0,1" Padding="12,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/RevitMCP.Plugin;component/Resources/icon16.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Revit MCP Agent Activity" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                    <Border Background="#333337" CornerRadius="8" Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="ItemCountTextBlock" Text="0" Foreground="#858585" FontSize="10"/>
+                    </Border>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Clear" Click="OnClearClick"
+                        Style="{StaticResource FlatButtonStyle}"/>
+            </Grid>
+        </Border>
+
+        <!-- Activity Feed List (Stretched full-width cards) -->
+        <ListBox Grid.Row="1" x:Name="ActivityListBox" 
+                 Background="#1E1E1E" BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 MouseDoubleClick="OnItemDoubleClick"
+                 Padding="4,6">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0,0,0,6"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#252526" CornerRadius="4" Padding="8,8,10,8" 
+                            BorderBrush="#333337" BorderThickness="1"
+                            HorizontalAlignment="Stretch">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left Accent Status Indicator -->
+                            <Border Grid.Column="0" Background="{Binding StatusColor}" CornerRadius="2" Margin="0,1"/>
+
+                            <!-- Main Card Content -->
+                            <Grid Grid.Column="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Row 0: Agent name + Time + Duration + Status -->
+                                <Grid Grid.Row="0" Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding AgentName}" FontWeight="Bold" Foreground="#4EC9B0" Margin="0,0,6,0" FontSize="11"/>
+                                        <TextBlock Text="{Binding TimestampText}" Foreground="#858585" FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="{Binding DurationText}" Foreground="#9CDCFE" FontSize="10" VerticalAlignment="Center" Visibility="{Binding HasDurationVisibility}"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="{Binding StatusText}" Foreground="{Binding StatusColor}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- Row 1: Action Summary -->
+                                <TextBlock Grid.Row="1" Text="{Binding Summary}" TextWrapping="Wrap" Foreground="#CCCCCC" FontSize="12" Margin="0,0,0,4"/>
+
+                                <!-- Row 2: Error Message Banner (if error) -->
+                                <Border Grid.Row="2" Background="#381D1D" BorderBrush="#592525" BorderThickness="1" CornerRadius="3" Padding="6,4" Margin="0,2,0,6" Visibility="{Binding HasErrorVisibility}">
+                                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#F48771" FontSize="10" TextWrapping="Wrap"/>
+                                </Border>
+
+                                <!-- Row 3: Interactive Selection Button -->
+                                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,2,0,0" Visibility="{Binding HasElementsVisibility}">
+                                    <Button Content="{Binding ButtonSelectText}" 
+                                            Style="{StaticResource SelectElementsButtonStyle}"
+                                            Click="OnSelectElementsClick"
+                                            ToolTip="Click to select these elements"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#252526" BorderBrush="#3F3F46" BorderThickness="0,1,0,0" Padding="10,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="#4EC9B0" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="UiStateTextBlock" Text="Ready" Foreground="#CCCCCC" FontSize="11" FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" x:Name="DocNameTextBlock" Text="No document open" 
+                           Foreground="#858585" FontSize="11" TextTrimming="CharacterEllipsis" Margin="10,0"
+                           ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+
+                <TextBlock Grid.Column="2" x:Name="PipeStatusTextBlock" Text="Connected" Foreground="#858585" FontSize="10"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

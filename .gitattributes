@@ -1,0 +1,23 @@
+# Line-ending normalization and binary files.
+# Text is stored with LF in the repository; Windows working copies get CRLF
+# for the files where it matters (sln, scripts, Inno Setup).
+
+* text=auto
+
+*.sln          text eol=crlf
+*.csproj       text eol=crlf
+*.props        text eol=crlf
+*.targets      text eol=crlf
+*.ps1          text eol=crlf
+*.psm1         text eol=crlf
+*.iss          text eol=crlf
+*.bat          text eol=crlf
+*.cmd          text eol=crlf
+
+*.png          binary
+*.jpg          binary
+*.ico          binary
+*.dll          binary
+*.exe          binary
+*.pdb          binary
+*.zip          binary

@@ -1,0 +1,40 @@
+name: Feature request
+description: A new tool, workflow or improvement to an existing one
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What the user needs to accomplish and why the current tools fall short
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Tool name, input parameters, expected result
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - MCP tools
+        - execute_csharp / Roslyn
+        - Structural design (SP 63)
+        - BIM-Map / knowledge base
+        - Agent pane (WPF)
+        - IPC / client connection
+        - Build, installer, documentation
+    validations:
+      required: true
+  - type: input
+    id: revit
+    attributes:
+      label: Revit versions
+      description: Which versions must this work on
+      placeholder: 2022–2027
+    validations:
+      required: false

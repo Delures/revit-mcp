@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          $v = "${{ github.event.inputs.version }}"
+          if ([string]::IsNullOrWhiteSpace($v)) { $v = "${{ github.ref_name }}" }
+          $v = $v.TrimStart('v')
+          "value=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Restore
+        run: dotnet restore RevitMCP.sln -p:Configuration=R2025
+
+      - name: Test
+        run: dotnet test tests/RevitMCP.Tests/RevitMCP.Tests.csproj -c R2025 --no-restore
+
+      - name: Build installer (Revit 2019-2027)
+        shell: pwsh
+        run: |
+          ./build-installer.ps1 -AppVersion "${{ steps.version.outputs.value }}"
+
+      - name: Collect per-version archives
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.value }}"
+          New-Item -ItemType Directory -Force -Path release-assets | Out-Null
+          foreach ($year in 2019..2027) {
+            $dir = "dist/bin/$year"
+            if (Test-Path $dir) {
+              Compress-Archive -Path "$dir/*" -DestinationPath "release-assets/RevitMCP-$version-Revit$year.zip" -Force
+            }
+          }
+          Copy-Item "dist-installer/RevitMCP-Setup-$version.exe" release-assets/
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: release-assets/*
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <UseRevitApi>false</UseRevitApi>
+        <UseWPF>false</UseWPF>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    </ItemGroup>
+</Project>

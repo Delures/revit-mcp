@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <PropertyGroup>
+        <Configurations>Debug;Release;R2019;R2020;R2021;R2022;R2023;R2024;R2025;R2026;R2027</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <Version>1.0.0</Version>
+        <Authors>Delures</Authors>
+        <Product>Revit MCP</Product>
+    </PropertyGroup>
+
+    <!--
+        Revit version mappings.
+        Revit 2019-2024 run on .NET Framework 4.8, Revit 2025-2026 on .NET 8, Revit 2027 on .NET 10.
+        RevitApiVersion pins the exact Revit_All_Main_Versions_API_x64 package:
+        floating 2026.* resolves to 2026.5.0, whose assemblies ship against System.Runtime 10
+        and therefore cannot be referenced from a net8.0-windows project.
+    -->
+    <PropertyGroup Condition="'$(Configuration)' == 'R2019'">
+        <RevitVersion>2019</RevitVersion>
+        <RevitApiVersion>2019.0.1</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2020'">
+        <RevitVersion>2020</RevitVersion>
+        <RevitApiVersion>2020.0.1</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2021'">
+        <RevitVersion>2021</RevitVersion>
+        <RevitApiVersion>2021.1.9</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2022'">
+        <RevitVersion>2022</RevitVersion>
+        <RevitApiVersion>2022.1.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2023'">
+        <RevitVersion>2023</RevitVersion>
+        <RevitApiVersion>2023.0.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2024'">
+        <RevitVersion>2024</RevitVersion>
+        <RevitApiVersion>2024.2.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2025'">
+        <RevitVersion>2025</RevitVersion>
+        <RevitApiVersion>2025.0.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net8.0-windows</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2026'">
+        <RevitVersion>2026</RevitVersion>
+        <RevitApiVersion>2026.0.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net8.0-windows</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'R2027'">
+        <RevitVersion>2027</RevitVersion>
+        <RevitApiVersion>2027.0.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net10.0-windows</TargetFramework>
+    </PropertyGroup>
+
+    <!-- Default fallback for standard Debug/Release builds in IDE -->
+    <PropertyGroup Condition="'$(RevitVersion)' == ''">
+        <RevitVersion>2025</RevitVersion>
+        <RevitApiVersion Condition="'$(RevitApiVersion)' == ''">2025.0.0</RevitApiVersion>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net8.0-windows</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(RevitVersion)' != ''">
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <DefineConstants>$(DefineConstants);REVIT_$(RevitVersion)</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PlatformTarget>x64</PlatformTarget>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <UseWPF Condition="'$(UseWPF)' == ''">false</UseWPF>
+        <UseRevitApi Condition="'$(UseRevitApi)' == ''">false</UseRevitApi>
+    </PropertyGroup>
+
+    <!-- Revit API official package for Plugin -->
+    <ItemGroup Condition="'$(UseRevitApi)' == 'true'">
+        <PackageReference Include="Revit_All_Main_Versions_API_x64"
+                          Version="$(RevitApiVersion)"
+                          IncludeAssets="build; compile"/>
+    </ItemGroup>
+
+    <!-- WPF references for .NET Framework 4.8 -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'net48' and '$(UseWPF)' == 'true'">
+        <Reference Include="PresentationCore"/>
+        <Reference Include="PresentationFramework"/>
+        <Reference Include="System"/>
+        <Reference Include="System.Core"/>
+        <Reference Include="System.Drawing"/>
+        <Reference Include="System.Windows.Forms"/>
+        <Reference Include="WindowsBase"/>
+    </ItemGroup>
+</Project>
